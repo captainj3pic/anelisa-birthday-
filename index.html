@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Anelisa!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,400&family=Plus+Jakarta+Sans:wght@300;500;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #ffffff;
+            background-color: #000000;
+            overflow-x: hidden;
+        }
+
+        /* 1. Base Layer: Deep Solid Black Background */
+        .cinematic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -4;
+            background: #050505;
+        }
+
+        /* 2. Photo Layer: Fixed behind gradients and user interface */
+        .photo-silhouette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -0.991;
+            object-fit: cover;
+            opacity: 0; /* Clearly visible from the start */
+            filter: brightness(0.95) contrast(1.05) saturate(1.05);
+            transition: opacity 8.5s ease, transform 2s ease, filter 1.5s ease;
+        }
+
+        .photo-silhouette.glow {
+            opacity: 1;
+            filter: brightness(1.05) contrast(1.05) saturate(1.15);
+            transform: scale(1.03);
+        }
+
+        /* 3. Gradient Overlay: Vignette styling that shadows outer margins */
+        .cinematic-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background: 
+                radial-gradient(circle at 50% 35%, rgba(244, 114, 182, 0.10) 0%, rgba(5,5,5,0) 65%),
+                radial-gradient(circle, rgba(5,5,5,0) 30%, rgba(5,5,5,0.55) 90%);
+            pointer-events: none;
+        }
+
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 2;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .sparkle-icon {
+            font-size: 1.8rem;
+            color: #ffcc00;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite ease-in-out;
+            text-shadow: 0 0 20px rgba(244, 114, 182, 0.6);
+        }
+
+        .tagline {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            color: rgba(244, 114, 182, 0.85);
+            margin-bottom: 12px;
+            font-weight: 500;
+            animation: wish 3s ease 1s infinite alternate-reverse both;
+        }
+
+        @keyframes wish {
+            from {
+                color: ;
+            }
+            to {color: #ffcc00;}
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.8rem;
+            font-weight: 400;
+            line-height: 1.1;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ffffff 35%, #fbcfe8 70%, #f472b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h1 em {
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            background: linear-gradient(135deg, #fce7f3 0%, #f472b6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .message {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(254, 186, 0, 0.75);
+            max-width: 500px;
+            margin-bottom: 25px;
+            font-weight: 300;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+        }
+
+        .cake-container {
+            position: relative;
+            margin: 20px 0 30px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            width: 230px;
+        }
+
+        .cake-container:hover {
+            transform: scale(1.04);
+        }
+
+        .candle {
+            position: absolute;
+            top: -34px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 7px;
+            height: 34px;
+            background: linear-gradient(to right, #fff8f2, #e8d9d2, #fff8f2);
+            border-radius: 4px;
+            z-index: 3;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+
+        .flame {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 20px;
+            background: radial-gradient(circle, #fff7d6 0%, #fbcfe8 35%, #db2777 100%);
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 15px #f472b6, 0 0 25px #fce7f3;
+            animation: flicker 0.8s infinite alternate;
+        }
+
+        .flame.extinguished {
+            display: none;
+        }
+
+        .cake-svg {
+            display: block;
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 14px 22px rgba(0,0,0,0.85));
+            transition: clip-path 0.6s cubic-bezier(0.65, 0, 0.35, 1), transform 0.6s ease;
+        }
+
+        .eaten .cake-svg {
+            clip-path: polygon(0 0, 68% 0, 68% 100%, 0 100%);
+        }
+
+        .action-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+            background: rgba(244, 114, 182, 0.1);
+            border: 1px solid rgba(244, 114, 182, 0.4);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #f472b6;
+            color: #050505;
+            box-shadow: 0 0 25px rgba(244, 114, 182, 0.6);
+            border-color: #f472b6;
+        }
+
+        .love-message-card {
+            max-width: 520px;
+            background: rgba(20, 10, 15, 0.94);
+            border: 1px solid rgba(244, 114, 182, 0.35);
+            padding: 24px 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .love-message-card.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .love-message-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: #fbcfe8;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .love-message-card p {
+            font-size: 0.92rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+            margin-bottom: 12px;
+        }
+
+        .signature {
+            font-size: 0.82rem;
+            color: #f472b6;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+            100% { transform: translateX(-50%) scale(1.1); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.8rem; }
+            .love-message-card { padding: 18px 20px; }
+            .cake-container { width: 190px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="cinematic-bg"></div>
+    <img src="anelisa (1).jpg" alt="Anelisa" class="photo-silhouette" id="bg-photo">
+    <div class="cinematic-overlay"></div>
+    <canvas id="confetti-canvas"></canvas>
+
+    <audio id="birthday-song" src="happy-birthday-495860.mp3" preload="auto"></audio>
+
+    <main class="wrapper">
+        <div class="sparkle-icon">✦</div>
+        <p class="tagline">A Special Wish</p>
+        <h1>Happy Birthday, <br><em>Anelisa </em>💞✨️</h1>💞✨️
+        <p class="message">You're Realy are pretty and light up every single horizon. Tap your candle or take a slice to reveal a surprise!</p>
+        
+        <div class="cake-container" id="cake" onclick="revealMagic()">
+            <div class="candle">
+                <div class="flame" id="flame"></div>
+            </div>
+            <svg class="cake-svg" viewBox="0 0 230 190" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="cakeBody" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#3a2029"/>
+                        <stop offset="100%" stop-color="#170c11"/>
+                    </linearGradient>
+                    <linearGradient id="cakeBodyTop" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#452531"/>
+                        <stop offset="100%" stop-color="#1d1015"/>
+                    </linearGradient>
+                    <linearGradient id="frostingPink" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#fce7f3"/>
+                        <stop offset="45%" stop-color="#f472b6"/>
+                        <stop offset="100%" stop-color="#db2777"/>
+                    </linearGradient>
+                    <radialGradient id="plateShadow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="rgba(0,0,0,0.55)"/>
+                        <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+                    </radialGradient>
+                </defs>
+
+                <!-- plate shadow -->
+                <ellipse cx="115" cy="178" rx="100" ry="12" fill="url(#plateShadow)"/>
+
+                <!-- bottom tier -->
+                <rect x="15" y="105" width="200" height="65" rx="10" fill="url(#cakeBody)" stroke="rgba(244,114,182,0.25)" stroke-width="1"/>
+                <rect x="15" y="105" width="200" height="24" rx="10" fill="url(#frostingPink)"/>
+                <!-- bottom tier drip frosting -->
+                <g fill="url(#frostingPink)">
+                    <ellipse cx="35" cy="129" rx="9" ry="12"/>
+                    <ellipse cx="68" cy="129" rx="7" ry="17"/>
+                    <ellipse cx="100" cy="129" rx="8" ry="9"/>
+                    <ellipse cx="132" cy="129" rx="7" ry="20"/>
+                    <ellipse cx="163" cy="129" rx="8" ry="11"/>
+                    <ellipse cx="196" cy="129" rx="7" ry="15"/>
+                </g>
+                <!-- bottom tier sprinkles -->
+                <g>
+                    <rect x="30" y="140" width="4" height="9" rx="2" fill="#fbcfe8" transform="rotate(20 30 140)"/>
+                    <rect x="60" y="150" width="4" height="9" rx="2" fill="#ffffff" transform="rotate(-15 60 150)"/>
+                    <rect x="90" y="142" width="4" height="9" rx="2" fill="#f9a8d4" transform="rotate(35 90 142)"/>
+                    <rect x="120" y="152" width="4" height="9" rx="2" fill="#fce7f3" transform="rotate(-25 120 152)"/>
+                    <rect x="150" y="141" width="4" height="9" rx="2" fill="#ffffff" transform="rotate(10 150 141)"/>
+                    <rect x="180" y="151" width="4" height="9" rx="2" fill="#f9a8d4" transform="rotate(-10 180 151)"/>
+                </g>
+
+                <!-- top tier -->
+                <rect x="52" y="55" width="126" height="55" rx="9" fill="url(#cakeBodyTop)" stroke="rgba(244,114,182,0.25)" stroke-width="1"/>
+                <rect x="52" y="55" width="126" height="20" rx="9" fill="url(#frostingPink)"/>
+                <!-- top tier drip frosting -->
+                <g fill="url(#frostingPink)">
+                    <ellipse cx="68" cy="75" rx="7" ry="10"/>
+                    <ellipse cx="95" cy="75" rx="6" ry="15"/>
+                    <ellipse cx="122" cy="75" rx="7" ry="8"/>
+                    <ellipse cx="150" cy="75" rx="6" ry="13"/>
+                    <ellipse cx="172" cy="75" rx="6" ry="9"/>
+                </g>
+                <!-- top tier sprinkles -->
+                <g>
+                    <rect x="72" y="84" width="4" height="8" rx="2" fill="#ffffff" transform="rotate(15 72 84)"/>
+                    <rect x="100" y="90" width="4" height="8" rx="2" fill="#fbcfe8" transform="rotate(-20 100 90)"/>
+                    <rect x="128" y="85" width="4" height="8" rx="2" fill="#f9a8d4" transform="rotate(25 128 85)"/>
+                    <rect x="156" y="91" width="4" height="8" rx="2" fill="#ffffff" transform="rotate(-10 156 91)"/>
+                </g>
+
+                <!-- fondant heart topper -->
+                <path d="M115 42 c-4-6 -13-6 -13 1 c0 6 8 10 13 15 c5-5 13-9 13-15 c0-7 -9-7 -13-1z" fill="#f472b6" stroke="#fce7f3" stroke-width="0.5"/>
+
+                <!-- subtle top highlight for dimensionality -->
+                <rect x="15" y="105" width="200" height="4" rx="2" fill="rgba(255,255,255,0.25)"/>
+                <rect x="52" y="55" width="126" height="3" rx="1.5" fill="rgba(255,255,255,0.25)"/>
+            </svg>
+        </div>
+
+        <div class="action-group">
+            <button class="btn" id="magic-btn" onclick="revealMagic()">Blow Candle & Taste Magic ✨</button>
+        </div>
+
+        <div class="love-message-card" id="message-card">
+            <h3>My Dearest Anelisa,</h3>
+            <p>Out of all the chaotic beauty in this universe, you're most blessed to have to celebrate your <i> Birthday </i>today, Japo there is no real Cake 🎂🍰 mbele yako leo hii,  <i style="color: aqua;">I hope you have the best water splash 🌊 with full of blessings ever!</i> <br><b>Remember</b> Your <u style="color: #ffcc00;">Parents</u> wanajivunia sana wewe so make sure to Prove them you are that <b style="color: #db2777;">Girl</b> ambaye wanajisifia kumkuza. You make everything softer, brighter, and entirely magical just by existing. Am Happy to have a friend & Buddy like you. Have the most wonderful, breathtaking birthday ever.</p>
+            <p class="signature">Forever your buddy, Captain J3 💖</p>
+        </div>
+    </main>
+
+    <script>
+        const canvas = document.getElementById("confetti-canvas");
+        const ctx = canvas.getContext("2d");
+        let particles = [];
+        const colors = ["#f472b6", "#fbcfe8", "#fce7f3", "#ffffff", "#db2777"];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, isBurst = false) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 4 + 2;
+                if (isBurst) {
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = Math.random() * 8 + 3;
+                    this.speedX = Math.cos(angle) * speed;
+                    this.speedY = Math.sin(angle) * speed;
+                } else {
+                    this.speedX = Math.random() * 1 - 0.5;
+                    this.speedY = Math.random() * 1.5 + 0.5;
+                }
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.opacity = Math.random() * 0.7 + 0.3;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 2 - 1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotationSpeed;
+                this.opacity -= 0.004;
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.rotation * Math.PI) / 180);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.opacity;
+                ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size * 1.8);
+                ctx.restore();
+            }
+        }
+
+        function revealMagic() {
+            const flame = document.getElementById("flame");
+            const cake = document.getElementById("cake");
+            const photo = document.getElementById("bg-photo");
+            const card = document.getElementById("message-card");
+            
+            flame.classList.add("extinguished");
+            cake.classList.add("eaten");
+            photo.classList.add("glow");
+            card.classList.add("visible");
+            
+            const cakeRect = cake.getBoundingClientRect();
+            for (let i = 0; i < 110; i++) {
+                particles.push(new Particle(cakeRect.left + cakeRect.width / 2, cakeRect.top, true));
+            }
+
+            const song = document.getElementById("birthday-song");
+            song.play().catch(e => console.log("Audio waiting for valid source file 'song.mp3':", e));
+            
+            document.getElementById("magic-btn").innerText = "Wish Granted 💖✨";
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if(Math.random() < 0.04) {
+                particles.push(new Particle(Math.random() * canvas.width, -10, false));
+            }
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].opacity <= 0 || particles[i].y > canvas.height) {
+                    particles.splice(i, 1);
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
